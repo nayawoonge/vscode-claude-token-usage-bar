@@ -2,7 +2,7 @@
   "name": "claude-token-monitor",
   "displayName": "Claude Token Monitor",
   "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "nayawoonge",
   "license": "MIT",
   "repository": {
@@ -13,12 +13,24 @@
     "url": "https://github.com/nayawoonge/claude-token-monitor/issues"
   },
   "homepage": "https://github.com/nayawoonge/claude-token-monitor#readme",
-  "categories": ["Other", "Visualization"],
-  "keywords": ["claude", "claude-code", "token", "usage", "monitor", "status bar"],
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "token",
+    "usage",
+    "monitor",
+    "status bar"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -55,11 +67,27 @@
         "claudeMonitor.showTodayUsage": {
           "type": "boolean",
           "default": true,
-          "description": "Show a second status bar item with today's cumulative token usage."
+          "description": "Show today's cumulative token usage next to the context bar."
+        },
+        "claudeMonitor.scope": {
+          "type": "string",
+          "enum": [
+            "workspace",
+            "global"
+          ],
+          "default": "workspace",
+          "enumDescriptions": [
+            "Context bar tracks the newest session of the currently open workspace's project (closest to 'current session').",
+            "Context bar tracks the newest session across all projects."
+          ],
+          "description": "Which session the context bar reflects."
         },
         "claudeMonitor.alignment": {
           "type": "string",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "right",
           "description": "Which side of the status bar to place the item on."
         }

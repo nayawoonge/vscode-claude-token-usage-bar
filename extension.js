@@ -3,8 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-let ctxItem; // context-window bar
-let usageItem; // today's cumulative usage
+let item; // single combined status bar item
 let timer;
 let visible = true;
 
@@ -14,13 +13,11 @@ function activate(context) {
       ? vscode.StatusBarAlignment.Left
       : vscode.StatusBarAlignment.Right;
 
-  ctxItem = vscode.window.createStatusBarItem(align, 101);
-  ctxItem.command = 'claudeMonitor.refresh';
+  // A single item so nothing (Copilot, encoding, Ln/Col…) can wedge between the parts.
+  item = vscode.window.createStatusBarItem(align, 100);
+  item.command = 'claudeMonitor.refresh';
 
-  usageItem = vscode.window.createStatusBarItem(align, 100);
-  usageItem.command = 'claudeMonitor.refresh';
-
-  context.subscriptions.push(ctxItem, usageItem);
+  context.subscriptions.push(item);
 
   context.subscriptions.push(
     vscode.commands.registerCommand('claudeMonitor.refresh', update),
@@ -72,13 +69,33 @@ function allLogs() {
       if (!f.endsWith('.jsonl')) continue;
       const p = path.join(dir, f);
       try {
-        out.push({ path: p, mtime: fs.statSync(p).mtimeMs });
+        out.push({ path: p, mtime: fs.statSync(p).mtimeMs, project: d });
       } catch (_) {
         /* ignore */
       }
     }
   }
   return out;
+}
+
+// Claude Code stores a project's sessions under a folder whose name is the
+// project path with every non-alphanumeric char replaced by '-'.
+// e.g. /Users/me/src/app  ->  -Users-me-src-app
+function workspaceProjectDir() {
+  const folders = vscode.workspace.workspaceFolders;
+  if (!folders || !folders.length) return null;
+  const p = folders[0].uri.fsPath;
+  return p.replace(/[^A-Za-z0-9]/g, '-');
+}
+
+// Logs limited to the current VS Code workspace's project, if we can find it.
+// Falls back to all logs when there is no workspace or no matching folder.
+function scopedLogs(logs) {
+  if (getCfg().get('scope', 'workspace') !== 'workspace') return logs;
+  const target = workspaceProjectDir();
+  if (!target) return logs;
+  const matched = logs.filter((l) => l.project === target);
+  return matched.length ? matched : logs;
 }
 
 function latestLog(logs) {
@@ -180,14 +197,9 @@ function fmt(n) {
   return String(n);
 }
 
-function hide() {
-  ctxItem.hide();
-  usageItem.hide();
-}
-
 function update() {
   if (!visible) {
-    hide();
+    item.hide();
     return;
   }
 
@@ -197,31 +209,31 @@ function update() {
   const showToday = cfg.get('showTodayUsage', true);
 
   const logs = allLogs();
-  const file = latestLog(logs);
+  // Context = the current session: newest log in THIS workspace's project.
+  const file = latestLog(scopedLogs(logs));
 
-  // --- Context-window item ---
+  // --- Context-window part ---
+  let ctxText;
+  let ctxTip;
+  let bg;
   if (!file) {
-    ctxItem.text = '$(hubot) Claude: no log';
-    ctxItem.tooltip = 'No ~/.claude/projects/**/*.jsonl found yet.';
-    ctxItem.backgroundColor = undefined;
+    ctxText = '$(thinking) Claude: no log';
+    ctxTip = 'No ~/.claude/projects/**/*.jsonl found yet.';
   } else {
     const used = lastContextTokens(file);
     if (used == null) {
-      ctxItem.text = '$(hubot) Claude: --';
-      ctxItem.tooltip = 'No usage record found in the latest session log.';
-      ctxItem.backgroundColor = undefined;
+      ctxText = '$(thinking) Claude: --';
+      ctxTip = 'No usage record found in the latest session log.';
     } else {
       const usedPct = Math.min(100, (used / max) * 100);
       const leftPct = 100 - usedPct;
-      ctxItem.text = `$(hubot) Ctx ${bar(usedPct, width)} ${leftPct.toFixed(0)}% left`;
-      ctxItem.tooltip = new vscode.MarkdownString(
+      ctxText = `$(thinking) Context ${bar(usedPct, width)} ${usedPct.toFixed(0)}% used`;
+      ctxTip =
         `**Claude context window**\n\n` +
-          `- Used: ${used.toLocaleString()} / ${max.toLocaleString()} tokens (${usedPct.toFixed(1)}%)\n` +
-          `- Remaining: ${(max - used).toLocaleString()} tokens (${leftPct.toFixed(1)}%)\n` +
-          `- Source: \`${path.basename(file)}\`\n\n` +
-          `_Click to refresh._`
-      );
-      ctxItem.backgroundColor =
+        `- Used: ${used.toLocaleString()} / ${max.toLocaleString()} tokens (${usedPct.toFixed(1)}%)\n` +
+        `- Remaining: ${(max - used).toLocaleString()} tokens (${leftPct.toFixed(1)}%)\n` +
+        `- Source: \`${path.basename(file)}\``;
+      bg =
         leftPct < 10
           ? new vscode.ThemeColor('statusBarItem.errorBackground')
           : leftPct < 25
@@ -229,28 +241,30 @@ function update() {
             : undefined;
     }
   }
-  ctxItem.show();
 
-  // --- Today's cumulative usage item ---
-  if (!showToday) {
-    usageItem.hide();
-    return;
-  }
-  const today = todayTokens(logs);
-  if (today == null) {
-    usageItem.text = '$(graph) Today --';
-    usageItem.tooltip = 'No token usage recorded today yet.';
-  } else {
-    usageItem.text = `$(graph) Today ${fmt(today)} tok`;
-    usageItem.tooltip = new vscode.MarkdownString(
-      `**Tokens processed today** (local date)\n\n` +
+  // --- Today's cumulative usage part ---
+  let todayText = '';
+  let todayTip = '';
+  if (showToday) {
+    const today = todayTokens(logs);
+    if (today == null) {
+      todayText = ' $(graph) Today --';
+      todayTip = '\n\n**Tokens today:** none recorded yet.';
+    } else {
+      todayText = ` $(graph) Today ${fmt(today)} tok`;
+      todayTip =
+        `\n\n**Tokens processed today** (local date)\n\n` +
         `- Total: ${today.toLocaleString()} tokens\n` +
         `- Includes input + output + cache read/write across all sessions.\n` +
-        `- This is *consumption*, not your plan's remaining quota — for that run \`/usage\`.\n\n` +
-        `_Click to refresh._`
-    );
+        `- This is *consumption*, not your plan's remaining quota — for that run \`/usage\`.`;
+    }
   }
-  usageItem.show();
+
+  // Combine into ONE item so nothing can be inserted between the two parts.
+  item.text = ctxText + todayText;
+  item.tooltip = new vscode.MarkdownString(ctxTip + todayTip + `\n\n_Click to refresh._`);
+  item.backgroundColor = bg;
+  item.show();
 }
 
 function deactivate() {

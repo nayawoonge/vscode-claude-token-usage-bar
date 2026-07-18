@@ -30,12 +30,16 @@ jobs:
         with:
           files: "*.vsix"
 
-      # Optional: publish to the VS Code Marketplace.
-      # Add a repo secret VSCE_PAT, then uncomment.
-      # - name: Publish to Marketplace
-      #   run: vsce publish -p ${{ secrets.VSCE_PAT }}
+      # Publishes to the VS Code Marketplace only if a VSCE_PAT repo secret exists.
+      - name: Publish to Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: vsce publish -p "$VSCE_PAT"
 
-      # Optional: publish to Open VSX (for VSCodium/Cursor/etc).
-      # Add a repo secret OVSX_PAT, then uncomment.
-      # - name: Publish to Open VSX
-      #   run: npx ovsx publish *.vsix -p ${{ secrets.OVSX_PAT }}
+      # Publishes to Open VSX (VSCodium/Cursor/…) only if an OVSX_PAT secret exists.
+      - name: Publish to Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: npx ovsx publish *.vsix -p "$OVSX_PAT"
