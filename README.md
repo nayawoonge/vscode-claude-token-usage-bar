@@ -31,7 +31,7 @@ Open the **Extensions** panel (`Cmd/Ctrl+Shift+X`), search **"Claude Token Monit
 
 1. Download the latest `.vsix` from [Releases](../../releases).
 2. **Extensions** panel → `···` menu → **Install from VSIX…** → pick the file.
-3. Or from the CLI: `code --install-extension claude-token-monitor-<version>.vsix`
+3. Or from the CLI: `code --install-extension claude-token-usage-bar-<version>.vsix`
 
 ### C. From source (dev)
 

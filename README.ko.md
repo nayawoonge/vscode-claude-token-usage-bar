@@ -31,7 +31,7 @@ Claude Code는 세션 로그를 `~/.claude/projects/<프로젝트>/<세션>.json
 
 1. [Releases](../../releases)에서 최신 `.vsix` 파일을 다운로드합니다.
 2. **확장 패널** → 우측 상단 `···` 메뉴 → **VSIX에서 설치…** → 받은 파일 선택.
-3. 또는 명령줄: `code --install-extension claude-token-monitor-<버전>.vsix`
+3. 또는 명령줄: `code --install-extension claude-token-usage-bar-<버전>.vsix`
 
 ### 방법 C — 소스에서 실행 (개발용)
 
