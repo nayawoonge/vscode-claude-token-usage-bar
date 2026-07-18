@@ -114,8 +114,26 @@ function usageOf(o) {
   return (o && o.message && o.message.usage) || (o && o.usage) || null;
 }
 
-// Tokens currently sitting in the context window (last usage record).
-function lastContextTokens(file) {
+// Known model context-window sizes (tokens). Used to auto-pick the right
+// denominator instead of assuming 200k. Matched by substring on the model id.
+const MODEL_WINDOWS = [
+  [/opus-4-8|opus-4-7|opus-4-6|opus-4-5/, 1000000],
+  [/sonnet-5|sonnet-4-6|sonnet-4-5/, 1000000],
+  [/fable-5|mythos-5/, 1000000],
+  [/haiku-4-5/, 200000],
+];
+
+function windowForModel(model) {
+  if (!model) return null;
+  for (const [re, win] of MODEL_WINDOWS) {
+    if (re.test(model)) return win;
+  }
+  return null;
+}
+
+// Tokens currently sitting in the context window (last usage record), plus the
+// model that produced it. Returns { tokens, model } or null.
+function lastContext(file) {
   let lines;
   try {
     lines = fs.readFileSync(file, 'utf8').trim().split('\n');
@@ -124,13 +142,16 @@ function lastContextTokens(file) {
   }
   for (let i = lines.length - 1; i >= 0; i--) {
     try {
-      const u = usageOf(JSON.parse(lines[i]));
+      const o = JSON.parse(lines[i]);
+      const u = usageOf(o);
       if (u && u.input_tokens != null) {
-        return (
-          (u.input_tokens || 0) +
-          (u.cache_read_input_tokens || 0) +
-          (u.cache_creation_input_tokens || 0)
-        );
+        return {
+          tokens:
+            (u.input_tokens || 0) +
+            (u.cache_read_input_tokens || 0) +
+            (u.cache_creation_input_tokens || 0),
+          model: (o.message && o.message.model) || o.model || null,
+        };
       }
     } catch (_) {
       /* skip malformed line */
@@ -204,7 +225,8 @@ function update() {
   }
 
   const cfg = getCfg();
-  const max = cfg.get('contextWindow', 200000);
+  const cfgMax = cfg.get('contextWindow', 1000000);
+  const autoDetect = cfg.get('autoDetectContextWindow', true);
   const width = cfg.get('barWidth', 12);
   const showToday = cfg.get('showTodayUsage', true);
 
@@ -220,11 +242,14 @@ function update() {
     ctxText = '$(thinking) Claude: no log';
     ctxTip = 'No ~/.claude/projects/**/*.jsonl found yet.';
   } else {
-    const used = lastContextTokens(file);
-    if (used == null) {
+    const ctx = lastContext(file);
+    if (ctx == null) {
       ctxText = '$(thinking) Claude: --';
       ctxTip = 'No usage record found in the latest session log.';
     } else {
+      const used = ctx.tokens;
+      const detected = autoDetect ? windowForModel(ctx.model) : null;
+      const max = detected || cfgMax;
       const usedPct = Math.min(100, (used / max) * 100);
       const leftPct = 100 - usedPct;
       ctxText = `$(thinking) Context ${bar(usedPct, width)} ${usedPct.toFixed(0)}% used`;
@@ -232,6 +257,7 @@ function update() {
         `**Claude context window**\n\n` +
         `- Used: ${used.toLocaleString()} / ${max.toLocaleString()} tokens (${usedPct.toFixed(1)}%)\n` +
         `- Remaining: ${(max - used).toLocaleString()} tokens (${leftPct.toFixed(1)}%)\n` +
+        `- Model: \`${ctx.model || 'unknown'}\`${detected ? ' (window auto-detected)' : ''}\n` +
         `- Source: \`${path.basename(file)}\``;
       bg =
         leftPct < 10

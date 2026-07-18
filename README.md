@@ -51,7 +51,8 @@ code .
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `claudeMonitor.contextWindow` | `200000` | Model context-window size in tokens. |
+| `claudeMonitor.contextWindow` | `1000000` | Model context-window size in tokens. |
+| `claudeMonitor.autoDetectContextWindow` | `true` | Pick the window size from the session's model (Opus 4.8 = 1M, Haiku 4.5 = 200k); falls back to `contextWindow`. |
 | `claudeMonitor.scope` | `workspace` | `workspace` = current project's newest session; `global` = newest session anywhere. |
 | `claudeMonitor.refreshMs` | `3000` | Refresh interval (ms). |
 | `claudeMonitor.barWidth` | `12` | Bar width in characters. |

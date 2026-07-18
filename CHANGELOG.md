@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- **Fixed the context bar reading 100% on 1M-context models.** The window size is now auto-detected from the session's model (Opus 4.8/4.7/4.6/4.5, Sonnet 5/4.6/4.5, Fable/Mythos 5 = 1M; Haiku 4.5 = 200k) instead of assuming 200k. New setting `claudeMonitor.autoDetectContextWindow` (default on); `claudeMonitor.contextWindow` default raised to 1,000,000 and is now the fallback when the model is unknown. The tooltip shows the model and whether the window was auto-detected.
+
 ## 0.3.1
 
 - Fixed `repository`/`bugs`/`homepage` URLs to the actual GitHub repo, and made README links absolute, so links on the Marketplace page no longer 404.

@@ -51,7 +51,8 @@ code .
 
 | 설정 | 기본값 | 설명 |
 | --- | --- | --- |
-| `claudeMonitor.contextWindow` | `200000` | 모델 컨텍스트 창 크기(토큰). |
+| `claudeMonitor.contextWindow` | `1000000` | 모델 컨텍스트 창 크기(토큰). |
+| `claudeMonitor.autoDetectContextWindow` | `true` | 세션 모델에서 창 크기 자동 감지(Opus 4.8 = 1M, Haiku 4.5 = 200k); 실패 시 `contextWindow` 사용. |
 | `claudeMonitor.scope` | `workspace` | `workspace` = 현재 프로젝트의 최신 세션 / `global` = 전역 최신 세션. |
 | `claudeMonitor.refreshMs` | `3000` | 갱신 주기(밀리초). |
 | `claudeMonitor.barWidth` | `12` | 막대 너비(문자 수). |

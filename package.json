@@ -2,7 +2,7 @@
   "name": "claude-token-usage-bar",
   "displayName": "Claude Token Usage Bar",
   "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publisher": "nayawoonge",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -49,8 +49,13 @@
       "properties": {
         "claudeMonitor.contextWindow": {
           "type": "number",
-          "default": 200000,
-          "description": "Model context-window size in tokens used to compute the usage bar."
+          "default": 1000000,
+          "description": "Fallback context-window size in tokens, used when the model can't be auto-detected (see claudeMonitor.autoDetectContextWindow)."
+        },
+        "claudeMonitor.autoDetectContextWindow": {
+          "type": "boolean",
+          "default": true,
+          "description": "Pick the context-window size from the session's model (e.g. Opus 4.8 = 1M, Haiku 4.5 = 200k). Falls back to claudeMonitor.contextWindow when the model is unknown."
         },
         "claudeMonitor.refreshMs": {
           "type": "number",
