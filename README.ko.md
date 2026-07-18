@@ -2,13 +2,15 @@
 
 [English](README.md) · **한국어**
 
-Claude Code의 **컨텍스트 창 사용량**을 VS Code 하단 상태 표시줄에 실시간 막대그래프로 보여주는 작은 확장입니다.
+Claude Code의 **컨텍스트 창 사용량**과 **오늘 누적 토큰 사용량**을 VS Code 하단 상태 표시줄에 보여주는 작은 확장입니다.
 
 ```
-🤖 Ctx ██████░░░░░░ 48% left
+🤖 Ctx ██████░░░░░░ 48% left   ·   📊 Today 1.24M tok
 ```
 
-남은 양이 **25% 미만이면 노란색**, **10% 미만이면 빨간색**으로 상태줄 항목 배경이 바뀌어, 컨텍스트가 바닥나기 전에 경고를 줍니다.
+컨텍스트 막대는 남은 양이 **25% 미만이면 노란색**, **10% 미만이면 빨간색**으로 바뀌어, 바닥나기 전에 경고를 줍니다. 두 번째 항목은 오늘 하루 모든 세션에서 처리된 토큰을 합산합니다.
+
+> **요금제 남은 한도는요?** 어떤 스크립트·확장으로도 볼 수 없습니다 — `/usage`는 대화형 명령 전용이고, 구독 한도는 로컬 로그·환경변수·텔레메트리 어디에도 노출되지 않습니다. Claude Code에서 `/usage`를 실행하거나 [Console](https://platform.claude.com/usage)에서 확인하세요. 이 확장은 *컨텍스트 여유*와 *오늘 사용량*을 보여줄 뿐, 요금제 잔여 한도는 아닙니다.
 
 ## 동작 원리
 
@@ -52,6 +54,7 @@ code .
 | `claudeMonitor.contextWindow` | `200000` | 모델 컨텍스트 창 크기(토큰). |
 | `claudeMonitor.refreshMs` | `3000` | 갱신 주기(밀리초). |
 | `claudeMonitor.barWidth` | `12` | 막대 너비(문자 수). |
+| `claudeMonitor.showTodayUsage` | `true` | 오늘 누적 토큰 사용량 항목 표시. |
 | `claudeMonitor.alignment` | `right` | 상태줄의 `left`/`right` 위치. |
 
 ## 명령

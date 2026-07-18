@@ -2,13 +2,15 @@
 
 **English** · [한국어](README.ko.md)
 
-A tiny VS Code extension that shows your **Claude Code context-window usage** as a live bar graph in the status bar.
+A tiny VS Code extension that shows your **Claude Code context-window usage** and **today's token consumption** in the status bar.
 
 ```
-🤖 Ctx ██████░░░░░░ 48% left
+🤖 Ctx ██████░░░░░░ 48% left   ·   📊 Today 1.24M tok
 ```
 
-The bar turns **yellow** below 25% remaining and **red** below 10%, so you get a warning before you run out of context.
+The context bar turns **yellow** below 25% remaining and **red** below 10%, so you get a warning before you run out of context. A second item sums all tokens processed today across your sessions.
+
+> **What about my plan's remaining quota?** That isn't available to any script or extension — Claude Code's `/usage` command is interactive-only and the subscription allowance isn't exposed in local logs, env vars, or telemetry. Run `/usage` inside Claude Code, or check the [Console](https://platform.claude.com/usage). This extension shows *context room* and *today's consumption*, not remaining plan quota.
 
 ## How it works
 
@@ -52,6 +54,7 @@ code .
 | `claudeMonitor.contextWindow` | `200000` | Model context-window size in tokens. |
 | `claudeMonitor.refreshMs` | `3000` | Refresh interval (ms). |
 | `claudeMonitor.barWidth` | `12` | Bar width in characters. |
+| `claudeMonitor.showTodayUsage` | `true` | Show today's cumulative token usage item. |
 | `claudeMonitor.alignment` | `right` | `left` or `right` side of the status bar. |
 
 ## Commands

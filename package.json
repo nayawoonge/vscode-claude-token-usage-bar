@@ -1,8 +1,8 @@
 {
   "name": "claude-token-monitor",
   "displayName": "Claude Token Monitor",
-  "description": "Show Claude Code context-window usage as a live bar graph in the VS Code status bar.",
-  "version": "0.0.1",
+  "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
+  "version": "0.1.0",
   "publisher": "nayawoonge",
   "license": "MIT",
   "repository": {
@@ -51,6 +51,11 @@
           "minimum": 4,
           "maximum": 40,
           "description": "Width of the bar graph in characters."
+        },
+        "claudeMonitor.showTodayUsage": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a second status bar item with today's cumulative token usage."
         },
         "claudeMonitor.alignment": {
           "type": "string",
