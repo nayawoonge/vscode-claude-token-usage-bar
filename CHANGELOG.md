@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+- Added the extension icon.
+- Marketplace release of the current feature set (current-session scope, single status bar item, % used, today's usage).
+
 ## 0.2.0
 
 - **Current-session aware:** the context bar now tracks the newest session of the *currently open workspace's* project instead of the globally newest log. New setting `claudeMonitor.scope` (`workspace` default, or `global`).
