@@ -1,6 +1,6 @@
 # Claude Token Monitor
 
-[English](https://github.com/nayawoonge/vscode-claude-code-token-monitor/blob/main/README.md) · **한국어**
+[English](https://github.com/nayawoonge/vscode-claude-token-usage-bar/blob/main/README.md) · **한국어**
 
 Claude Code의 **컨텍스트 창 사용량**과 **오늘 누적 토큰 사용량**을 VS Code 하단 상태 표시줄에 **한 항목**으로 보여주는 작은 확장입니다.
 
@@ -29,14 +29,14 @@ Claude Code는 세션 로그를 `~/.claude/projects/<프로젝트>/<세션>.json
 
 ### 방법 B — `.vsix` 파일로 설치 (계정 불필요)
 
-1. [Releases](https://github.com/nayawoonge/vscode-claude-code-token-monitor/releases)에서 최신 `.vsix` 파일을 다운로드합니다.
+1. [Releases](https://github.com/nayawoonge/vscode-claude-token-usage-bar/releases)에서 최신 `.vsix` 파일을 다운로드합니다.
 2. **확장 패널** → 우측 상단 `···` 메뉴 → **VSIX에서 설치…** → 받은 파일 선택.
 3. 또는 명령줄: `code --install-extension claude-token-usage-bar-<버전>.vsix`
 
 ### 방법 C — 소스에서 실행 (개발용)
 
 ```bash
-git clone https://github.com/nayawoonge/vscode-claude-code-token-monitor.git
+git clone https://github.com/nayawoonge/vscode-claude-token-usage-bar.git
 cd claude-token-monitor
 code .
 # F5 를 눌러 "확장 개발 호스트" 창 실행
@@ -45,7 +45,7 @@ code .
 ## 업데이트 방법 (사용자용)
 
 - **마켓플레이스로 설치한 경우:** 자동 업데이트됩니다. 수동으로 하려면 확장 패널 → 해당 확장 → **업데이트(Update)**, 또는 우클릭 → **확장 업데이트 확인**.
-- **`.vsix`로 설치한 경우:** [Releases](https://github.com/nayawoonge/vscode-claude-code-token-monitor/releases)에서 새 `.vsix`를 받아 **VSIX에서 설치…**를 다시 실행하면 기존 버전을 덮어씁니다. 안내가 뜨면 VS Code를 새로고침하세요.
+- **`.vsix`로 설치한 경우:** [Releases](https://github.com/nayawoonge/vscode-claude-token-usage-bar/releases)에서 새 `.vsix`를 받아 **VSIX에서 설치…**를 다시 실행하면 기존 버전을 덮어씁니다. 안내가 뜨면 VS Code를 새로고침하세요.
 
 ## 설정
 

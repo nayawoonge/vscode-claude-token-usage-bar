@@ -1,6 +1,6 @@
 # Claude Token Monitor
 
-**English** · [한국어](https://github.com/nayawoonge/vscode-claude-code-token-monitor/blob/main/README.ko.md)
+**English** · [한국어](https://github.com/nayawoonge/vscode-claude-token-usage-bar/blob/main/README.ko.md)
 
 A tiny VS Code extension that shows your **Claude Code context-window usage** and **today's token consumption** in one status bar item.
 
@@ -29,14 +29,14 @@ Open the **Extensions** panel (`Cmd/Ctrl+Shift+X`), search **"Claude Token Usage
 
 ### B. From a `.vsix` (GitHub Releases) — no account needed
 
-1. Download the latest `.vsix` from [Releases](https://github.com/nayawoonge/vscode-claude-code-token-monitor/releases).
+1. Download the latest `.vsix` from [Releases](https://github.com/nayawoonge/vscode-claude-token-usage-bar/releases).
 2. **Extensions** panel → `···` menu → **Install from VSIX…** → pick the file.
 3. Or from the CLI: `code --install-extension claude-token-usage-bar-<version>.vsix`
 
 ### C. From source (dev)
 
 ```bash
-git clone https://github.com/nayawoonge/vscode-claude-code-token-monitor.git
+git clone https://github.com/nayawoonge/vscode-claude-token-usage-bar.git
 cd claude-token-monitor
 code .
 # press F5 to launch an Extension Development Host
@@ -45,7 +45,7 @@ code .
 ## Updating (for users)
 
 - **Installed from the Marketplace:** updates are automatic. To force it: Extensions panel → the extension → **Update**, or right-click → **Check for Extension Updates**.
-- **Installed from a `.vsix`:** download the newer `.vsix` from [Releases](https://github.com/nayawoonge/vscode-claude-code-token-monitor/releases) and **Install from VSIX…** again — it replaces the old version. Reload VS Code when prompted.
+- **Installed from a `.vsix`:** download the newer `.vsix` from [Releases](https://github.com/nayawoonge/vscode-claude-token-usage-bar/releases) and **Install from VSIX…** again — it replaces the old version. Reload VS Code when prompted.
 
 ## Settings
 
@@ -65,7 +65,7 @@ code .
 
 ## Icon
 
-The extension icon lives at `images/icon.png` (128×128 PNG recommended). After adding it, re-enable `"icon": "images/icon.png"` in `package.json`. See [images/README.md](https://github.com/nayawoonge/vscode-claude-code-token-monitor/blob/main/images/README.md).
+The extension icon lives at `images/icon.png` (128×128 PNG recommended). After adding it, re-enable `"icon": "images/icon.png"` in `package.json`. See [images/README.md](https://github.com/nayawoonge/vscode-claude-token-usage-bar/blob/main/images/README.md).
 
 ## License
 
