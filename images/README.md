@@ -1,14 +1,12 @@
 # Icon
 
-Put the extension icon here as `icon.png`.
+`icon.png` (128×128) is the extension icon shown on the Marketplace and in the
+Extensions panel. It is referenced from `package.json` (`"icon": "images/icon.png"`).
 
-- Recommended size: **128×128** (square, PNG).
-- The Marketplace shows it next to the extension name.
+To regenerate it, run:
 
-After adding `images/icon.png`, re-enable the icon in `package.json`:
-
-```json
-"icon": "images/icon.png",
+```bash
+python3 scripts/make_icon.py
 ```
 
-(placed right after the `"license"` line).
+(requires Python with Pillow: `pip install pillow`)

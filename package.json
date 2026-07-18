@@ -5,6 +5,7 @@
   "version": "0.2.0",
   "publisher": "nayawoonge",
   "license": "MIT",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/nayawoonge/claude-token-monitor.git"
