@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1
+
+- Added a screenshot to the README and trimmed it to user-facing content.
+- Renamed the command and settings labels to "Claude Token Usage Bar" to match the extension.
+
 ## 0.4.0
 
 - **Fixed the context bar reading 100% on 1M-context models.** The window size is now auto-detected from the session's model (Opus 4.8/4.7/4.6/4.5, Sonnet 5/4.6/4.5, Fable/Mythos 5 = 1M; Haiku 4.5 = 200k) instead of assuming 200k. New setting `claudeMonitor.autoDetectContextWindow` (default on); `claudeMonitor.contextWindow` default raised to 1,000,000 and is now the fallback when the model is unknown. The tooltip shows the model and whether the window was auto-detected.

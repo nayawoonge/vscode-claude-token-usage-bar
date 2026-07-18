@@ -3,3 +3,5 @@
 .vscode/**
 *.vsix
 node_modules/**
+scripts/**
+images/screenshot.png

@@ -2,7 +2,7 @@
   "name": "claude-token-usage-bar",
   "displayName": "Claude Token Usage Bar",
   "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "publisher": "nayawoonge",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -37,15 +37,15 @@
     "commands": [
       {
         "command": "claudeMonitor.refresh",
-        "title": "Claude Token Monitor: Refresh Now"
+        "title": "Claude Token Usage Bar: Refresh Now"
       },
       {
         "command": "claudeMonitor.toggle",
-        "title": "Claude Token Monitor: Show/Hide"
+        "title": "Claude Token Usage Bar: Show/Hide"
       }
     ],
     "configuration": {
-      "title": "Claude Token Monitor",
+      "title": "Claude Token Usage Bar",
       "properties": {
         "claudeMonitor.contextWindow": {
           "type": "number",
