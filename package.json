@@ -1,0 +1,71 @@
+{
+  "name": "claude-token-monitor",
+  "displayName": "Claude Token Monitor",
+  "description": "Show Claude Code context-window usage as a live bar graph in the VS Code status bar.",
+  "version": "0.0.1",
+  "publisher": "nayawoonge",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nayawoonge/claude-token-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nayawoonge/claude-token-monitor/issues"
+  },
+  "homepage": "https://github.com/nayawoonge/claude-token-monitor#readme",
+  "categories": ["Other", "Visualization"],
+  "keywords": ["claude", "claude-code", "token", "usage", "monitor", "status bar"],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeMonitor.refresh",
+        "title": "Claude Token Monitor: Refresh Now"
+      },
+      {
+        "command": "claudeMonitor.toggle",
+        "title": "Claude Token Monitor: Show/Hide"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Token Monitor",
+      "properties": {
+        "claudeMonitor.contextWindow": {
+          "type": "number",
+          "default": 200000,
+          "description": "Model context-window size in tokens used to compute the usage bar."
+        },
+        "claudeMonitor.refreshMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 500,
+          "description": "How often to re-read the log and refresh the status bar, in milliseconds."
+        },
+        "claudeMonitor.barWidth": {
+          "type": "number",
+          "default": 12,
+          "minimum": 4,
+          "maximum": 40,
+          "description": "Width of the bar graph in characters."
+        },
+        "claudeMonitor.alignment": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right",
+          "description": "Which side of the status bar to place the item on."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.2.0"
+  }
+}
