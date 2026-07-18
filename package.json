@@ -2,18 +2,18 @@
   "name": "claude-token-usage-bar",
   "displayName": "Claude Token Usage Bar",
   "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "nayawoonge",
   "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nayawoonge/claude-token-monitor.git"
+    "url": "https://github.com/nayawoonge/vscode-claude-code-token-monitor.git"
   },
   "bugs": {
-    "url": "https://github.com/nayawoonge/claude-token-monitor/issues"
+    "url": "https://github.com/nayawoonge/vscode-claude-code-token-monitor/issues"
   },
-  "homepage": "https://github.com/nayawoonge/claude-token-monitor#readme",
+  "homepage": "https://github.com/nayawoonge/vscode-claude-code-token-monitor#readme",
   "categories": [
     "Other",
     "Visualization"

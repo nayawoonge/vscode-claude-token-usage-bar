@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Fixed `repository`/`bugs`/`homepage` URLs to the actual GitHub repo, and made README links absolute, so links on the Marketplace page no longer 404.
+
 ## 0.3.0
 
 - Added the extension icon.
