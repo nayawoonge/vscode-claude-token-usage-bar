@@ -1,6 +1,6 @@
 {
   "name": "claude-token-usage-bar",
-  "displayName": "Claude Token Monitor",
+  "displayName": "Claude Token Usage Bar",
   "description": "Show Claude Code context-window usage and today's token consumption in the VS Code status bar.",
   "version": "0.3.0",
   "publisher": "nayawoonge",

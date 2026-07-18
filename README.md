@@ -25,7 +25,7 @@ Claude Code writes session logs to `~/.claude/projects/<project>/<session>.jsonl
 
 ### A. From the Marketplace (recommended)
 
-Open the **Extensions** panel (`Cmd/Ctrl+Shift+X`), search **"Claude Token Monitor"**, and click **Install**. Updates arrive automatically.
+Open the **Extensions** panel (`Cmd/Ctrl+Shift+X`), search **"Claude Token Usage Bar"**, and click **Install**. Updates arrive automatically.
 
 ### B. From a `.vsix` (GitHub Releases) — no account needed
 

@@ -25,7 +25,7 @@ Claude Code는 세션 로그를 `~/.claude/projects/<프로젝트>/<세션>.json
 
 ### 방법 A — 마켓플레이스에서 설치 (권장)
 
-확장 패널(`Cmd/Ctrl+Shift+X`)에서 **"Claude Token Monitor"** 검색 → **설치**. 이후 업데이트는 자동입니다.
+확장 패널(`Cmd/Ctrl+Shift+X`)에서 **"Claude Token Usage Bar"** 검색 → **설치**. 이후 업데이트는 자동입니다.
 
 ### 방법 B — `.vsix` 파일로 설치 (계정 불필요)
 
