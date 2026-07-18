@@ -12,6 +12,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Job-level env so the `if` conditions below can actually see these values.
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,13 +37,9 @@ jobs:
       # Publishes to the VS Code Marketplace only if a VSCE_PAT repo secret exists.
       - name: Publish to Marketplace
         if: ${{ env.VSCE_PAT != '' }}
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: vsce publish -p "$VSCE_PAT"
 
       # Publishes to Open VSX (VSCodium/Cursor/…) only if an OVSX_PAT secret exists.
       - name: Publish to Open VSX
         if: ${{ env.OVSX_PAT != '' }}
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npx ovsx publish *.vsix -p "$OVSX_PAT"
