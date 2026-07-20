@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Hover dashboard now visualizes **every project's** total token usage as a bar chart (no longer capped at 6), sorted by usage. Per-file caching keeps it fast.
+
 ## 0.5.0
 
 - **Hover dashboard.** The tooltip is now a mini dashboard: current session context (used / remaining / model, auto-detected window) plus today's tokens broken down **per project** with mini bars.

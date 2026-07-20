@@ -6,6 +6,9 @@ const os = require('os');
 let item; // single combined status bar item
 let timer;
 let visible = true;
+// path -> { mtime, tokens }: per-file all-time token total, cached by mtime so
+// unchanged logs aren't re-read on every refresh.
+const fileTokenCache = new Map();
 
 function activate(context) {
   const align =
@@ -224,6 +227,45 @@ function projectLabel(dir) {
   return s;
 }
 
+// All-time token totals for every project (input+output+cache across all
+// sessions). Per-file results are cached by mtime, so only changed logs are
+// re-read on each refresh.
+function allProjectStats(logs) {
+  const per = {};
+  for (const l of logs) {
+    let entry = fileTokenCache.get(l.path);
+    if (!entry || entry.mtime !== l.mtime) {
+      let tokens = 0;
+      let lines = [];
+      try {
+        lines = fs.readFileSync(l.path, 'utf8').trim().split('\n');
+      } catch (_) {
+        /* unreadable — treat as 0 */
+      }
+      for (const line of lines) {
+        let u;
+        try {
+          u = usageOf(JSON.parse(line));
+        } catch (_) {
+          continue;
+        }
+        if (!u || u.input_tokens == null) continue;
+        tokens +=
+          (u.input_tokens || 0) +
+          (u.output_tokens || 0) +
+          (u.cache_creation_input_tokens || 0) +
+          (u.cache_read_input_tokens || 0);
+      }
+      entry = { mtime: l.mtime, tokens };
+      fileTokenCache.set(l.path, entry);
+    }
+    if (entry.tokens > 0) per[l.project] = (per[l.project] || 0) + entry.tokens;
+  }
+  return Object.entries(per)
+    .map(([project, tokens]) => ({ project, tokens }))
+    .sort((a, b) => b.tokens - a.tokens);
+}
+
 function bar(pct, width) {
   const filled = Math.max(0, Math.min(width, Math.round((pct / 100) * width)));
   // ▰ filled / ▱ empty — reads as a segmented gauge; filled segments take the
@@ -287,41 +329,44 @@ function update() {
     }
   }
 
-  // --- Today's cumulative usage part (+ per-project dashboard) ---
+  // --- Today's cumulative usage part ---
   let todayText = '';
-  let todayTip = '';
+  let todayLine = '';
   if (showToday) {
     const stats = todayStats(logs);
     if (stats == null) {
       todayText = '  ·  Today --';
-      todayTip = '\n\n**Today** — no tokens recorded yet.';
     } else {
       todayText = `  ·  Today ${fmt(stats.total)} tok`;
-      const top = stats.byProject.slice(0, 6);
-      const maxTok = top[0].tokens || 1;
-      const rows = top.map((p) => {
-        const b = bar(Math.round((p.tokens / maxTok) * 100), 6);
-        return `${b}  ${fmt(p.tokens).padStart(6)}  ${projectLabel(p.project)}`;
-      });
-      const more =
-        stats.byProject.length > top.length
-          ? `\n… +${stats.byProject.length - top.length} more project(s)`
-          : '';
-      todayTip =
-        `\n\n**Today — ${stats.total.toLocaleString()} tokens** ` +
-        `(input+output+cache, all projects)\n\n` +
-        '```\n' +
-        rows.join('\n') +
-        more +
-        '\n```' +
-        `\n\n_Consumption, not remaining plan quota — run \`/usage\` for that._`;
+      todayLine = `\n\n**Today:** ${stats.total.toLocaleString()} tokens`;
     }
+  }
+
+  // --- All-projects breakdown (visualized) ---
+  let dashTip = '';
+  const projects = allProjectStats(logs);
+  if (projects.length) {
+    const maxTok = projects[0].tokens || 1;
+    const rows = projects.map((p) => {
+      const b = bar(Math.round((p.tokens / maxTok) * 100), 10);
+      return `${b}  ${fmt(p.tokens).padStart(7)}  ${projectLabel(p.project)}`;
+    });
+    dashTip =
+      `\n\n**All projects — token usage** (${projects.length})\n\n` +
+      '```\n' +
+      rows.join('\n') +
+      '\n```' +
+      `\n\n_Consumption (input+output+cache), not remaining plan quota — run \`/usage\` for that._`;
   }
 
   // Combine into ONE item so nothing can be inserted between the two parts.
   item.text = ctxText + todayText;
   item.tooltip = new vscode.MarkdownString(
-    `### Claude Token Usage\n\n` + ctxTip + todayTip + `\n\n_Click the item to refresh._`
+    `### Claude Token Usage\n\n` +
+      ctxTip +
+      todayLine +
+      dashTip +
+      `\n\n_Click the item to refresh._`
   );
   item.backgroundColor = bg;
   item.show();
