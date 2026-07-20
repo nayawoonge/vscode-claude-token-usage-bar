@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Cleaner status bar: removed the `$(thinking)` / `$(graph)` icons and switched the gauge to segmented `▰▱` pills (filled segments render in the theme's foreground — light/white on dark themes), with a `·` separator between the context and today parts.
+
 ## 0.4.1
 
 - Added a screenshot to the README and trimmed it to user-facing content.

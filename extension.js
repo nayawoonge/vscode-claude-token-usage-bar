@@ -209,7 +209,9 @@ function todayTokens(logs) {
 
 function bar(pct, width) {
   const filled = Math.max(0, Math.min(width, Math.round((pct / 100) * width)));
-  return '█'.repeat(filled) + '░'.repeat(width - filled);
+  // ▰ filled / ▱ empty — reads as a segmented gauge; filled segments take the
+  // status bar foreground color (light/white on dark themes).
+  return '▰'.repeat(filled) + '▱'.repeat(width - filled);
 }
 
 function fmt(n) {
@@ -239,12 +241,12 @@ function update() {
   let ctxTip;
   let bg;
   if (!file) {
-    ctxText = '$(thinking) Claude: no log';
+    ctxText = 'Claude: no log';
     ctxTip = 'No ~/.claude/projects/**/*.jsonl found yet.';
   } else {
     const ctx = lastContext(file);
     if (ctx == null) {
-      ctxText = '$(thinking) Claude: --';
+      ctxText = 'Claude: --';
       ctxTip = 'No usage record found in the latest session log.';
     } else {
       const used = ctx.tokens;
@@ -252,7 +254,7 @@ function update() {
       const max = detected || cfgMax;
       const usedPct = Math.min(100, (used / max) * 100);
       const leftPct = 100 - usedPct;
-      ctxText = `$(thinking) Context ${bar(usedPct, width)} ${usedPct.toFixed(0)}% used`;
+      ctxText = `Context ${bar(usedPct, width)} ${usedPct.toFixed(0)}% used`;
       ctxTip =
         `**Claude context window**\n\n` +
         `- Used: ${used.toLocaleString()} / ${max.toLocaleString()} tokens (${usedPct.toFixed(1)}%)\n` +
@@ -274,10 +276,10 @@ function update() {
   if (showToday) {
     const today = todayTokens(logs);
     if (today == null) {
-      todayText = ' $(graph) Today --';
+      todayText = '  ·  Today --';
       todayTip = '\n\n**Tokens today:** none recorded yet.';
     } else {
-      todayText = ` $(graph) Today ${fmt(today)} tok`;
+      todayText = `  ·  Today ${fmt(today)} tok`;
       todayTip =
         `\n\n**Tokens processed today** (local date)\n\n` +
         `- Total: ${today.toLocaleString()} tokens\n` +
