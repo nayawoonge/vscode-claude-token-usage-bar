@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- **Hover dashboard.** The tooltip is now a mini dashboard: current session context (used / remaining / model, auto-detected window) plus today's tokens broken down **per project** with mini bars.
+
 ## 0.4.2
 
 - Cleaner status bar: removed the `$(thinking)` / `$(graph)` icons and switched the gauge to segmented `▰▱` pills (filled segments render in the theme's foreground — light/white on dark themes), with a `·` separator between the context and today parts.

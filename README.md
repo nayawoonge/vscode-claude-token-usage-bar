@@ -8,6 +8,8 @@ A tiny VS Code extension that shows your **Claude Code context-window usage** an
 
 The item turns **yellow** when the context window drops below 25% free and **red** below 10%, so you get a warning before you run out of room. Both parts live in a **single status bar item**, so nothing (Copilot, encoding, Ln/Col…) can wedge between them.
 
+**Hover** the item for a mini dashboard: the current session's context window (used / remaining / model) and today's tokens broken down per project.
+
 > **What about my plan's remaining quota?** That isn't available to any extension — Claude Code's `/usage` command is interactive-only and the subscription allowance isn't exposed anywhere a script can read. Run `/usage` inside Claude Code, or check the [Console](https://platform.claude.com/usage). This extension shows *context room* and *today's consumption*, not remaining plan quota.
 
 ## How it works

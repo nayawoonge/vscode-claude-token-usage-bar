@@ -160,17 +160,16 @@ function lastContext(file) {
   return null;
 }
 
-// Sum of all tokens processed today across every session log.
+// Tokens processed today, total and broken down per project.
 // "Today" is the local date; entries are matched by their `timestamp` field.
-function todayTokens(logs) {
+// Returns { total, byProject: [{project, tokens}] } or null when nothing today.
+function todayStats(logs) {
   const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const d = now.getDate();
-  const startOfDay = new Date(y, m, d).getTime();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
   let total = 0;
   let counted = false;
+  const perProject = {};
 
   for (const l of logs) {
     // Skip files not touched today at all (cheap pre-filter).
@@ -181,6 +180,7 @@ function todayTokens(logs) {
     } catch (_) {
       continue;
     }
+    let sub = 0;
     for (const line of lines) {
       let o;
       try {
@@ -196,15 +196,32 @@ function todayTokens(logs) {
         const t = Date.parse(o.timestamp);
         if (isNaN(t) || t < startOfDay) continue;
       }
-      total +=
+      sub +=
         (u.input_tokens || 0) +
         (u.output_tokens || 0) +
         (u.cache_creation_input_tokens || 0) +
         (u.cache_read_input_tokens || 0);
+    }
+    if (sub > 0) {
+      perProject[l.project] = (perProject[l.project] || 0) + sub;
+      total += sub;
       counted = true;
     }
   }
-  return counted ? total : null;
+  if (!counted) return null;
+  const byProject = Object.entries(perProject)
+    .map(([project, tokens]) => ({ project, tokens }))
+    .sort((a, b) => b.tokens - a.tokens);
+  return { total, byProject };
+}
+
+// Turn a Claude Code project-dir name (e.g. "-Users-me-src-my-app") into a
+// short, readable label. We can't perfectly decode (folder names contain
+// dashes), so show the tail.
+function projectLabel(dir) {
+  let s = String(dir).replace(/^-+/, '');
+  if (s.length > 26) s = '…' + s.slice(-26);
+  return s;
 }
 
 function bar(pct, width) {
@@ -270,27 +287,42 @@ function update() {
     }
   }
 
-  // --- Today's cumulative usage part ---
+  // --- Today's cumulative usage part (+ per-project dashboard) ---
   let todayText = '';
   let todayTip = '';
   if (showToday) {
-    const today = todayTokens(logs);
-    if (today == null) {
+    const stats = todayStats(logs);
+    if (stats == null) {
       todayText = '  ·  Today --';
-      todayTip = '\n\n**Tokens today:** none recorded yet.';
+      todayTip = '\n\n**Today** — no tokens recorded yet.';
     } else {
-      todayText = `  ·  Today ${fmt(today)} tok`;
+      todayText = `  ·  Today ${fmt(stats.total)} tok`;
+      const top = stats.byProject.slice(0, 6);
+      const maxTok = top[0].tokens || 1;
+      const rows = top.map((p) => {
+        const b = bar(Math.round((p.tokens / maxTok) * 100), 6);
+        return `${b}  ${fmt(p.tokens).padStart(6)}  ${projectLabel(p.project)}`;
+      });
+      const more =
+        stats.byProject.length > top.length
+          ? `\n… +${stats.byProject.length - top.length} more project(s)`
+          : '';
       todayTip =
-        `\n\n**Tokens processed today** (local date)\n\n` +
-        `- Total: ${today.toLocaleString()} tokens\n` +
-        `- Includes input + output + cache read/write across all sessions.\n` +
-        `- This is *consumption*, not your plan's remaining quota — for that run \`/usage\`.`;
+        `\n\n**Today — ${stats.total.toLocaleString()} tokens** ` +
+        `(input+output+cache, all projects)\n\n` +
+        '```\n' +
+        rows.join('\n') +
+        more +
+        '\n```' +
+        `\n\n_Consumption, not remaining plan quota — run \`/usage\` for that._`;
     }
   }
 
   // Combine into ONE item so nothing can be inserted between the two parts.
   item.text = ctxText + todayText;
-  item.tooltip = new vscode.MarkdownString(ctxTip + todayTip + `\n\n_Click to refresh._`);
+  item.tooltip = new vscode.MarkdownString(
+    `### Claude Token Usage\n\n` + ctxTip + todayTip + `\n\n_Click the item to refresh._`
+  );
   item.backgroundColor = bg;
   item.show();
 }
